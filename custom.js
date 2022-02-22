@@ -7,6 +7,7 @@ class Table{
 	}
 
 	buildTable(){
+
 		let table, row, cell;
 
 		let numC = this._headerData.length; 
@@ -36,6 +37,7 @@ class Table{
 					cell.appendChild(document.createTextNode(headerTitle[j - 1]));
 				
 				} else {
+
 					cell.appendChild(document.createTextNode(dataValues[i - 2][j]));
 				}
 
@@ -48,10 +50,43 @@ class Table{
 		document.body.appendChild(table);
 	}
 
+	addFilter(){
+		let dataFilter = document.createElement('div');
+		let filterInput = document.createElement('input');
+		dataFilter.appendChild(filterInput);
+		filterInput.type = 'text';
+		filterInput.value = '';
+		filterInput.placeholder = 'Search...';
+		filterInput.id = 'search-text';
 
+		dataFilter.style.margin = '20px 0';
+		filterInput.style.padding = '10px';
+
+		document.body.appendChild(dataFilter);
+
+		function tableFilter() {
+			let table = document.querySelector('table');
+			let filterWord = filterInput.value;
+
+			let regPhrase = new RegExp(filterWord, 'i');
+			let flag = false;
+			for (let i = 1; i < table.rows.length; i++) {
+			flag = false;
+			for (let j = table.rows[i].cells.length - 1; j >= 0; j--) {
+				flag = regPhrase.test(table.rows[i].cells[j].innerHTML);
+					if (flag) break;
+				}
+			if (flag) {
+				table.rows[i].style.display = "";
+			} else {
+				table.rows[i].style.display = "none";
+				}
+			}
+		}
+
+		filterInput.addEventListener('keyup', tableFilter);
+	}
 }
-
-
 
 const headerConfig = [
 	{
@@ -138,8 +173,7 @@ const data = [
 	}
 ]
 
-// console.log(Object.keys(data[0]));
-
 let tableExample = new Table(headerConfig, data);
 
 tableExample.buildTable();
+tableExample.addFilter();
